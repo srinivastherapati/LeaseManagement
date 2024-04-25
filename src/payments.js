@@ -8,7 +8,7 @@ const paymentsRouter = express.Router();
 paymentsRouter.post('/api/payments/:userId', async (req, res) => {
     try {
         const { userId } = req.params;
-        const { bankNumber, routerNumber, amount } = req.body;
+        const { bankNumber, routerNumber, amount , description } = req.body;
 
         const user = await User.findById(userId);
         if (!user) {
@@ -30,7 +30,8 @@ paymentsRouter.post('/api/payments/:userId', async (req, res) => {
             routerNumber,
             amount,
             transactionId,
-            status: 'Paid'
+            status: 'Paid',
+            description
         });
 
         // Save the payment to the database
