@@ -5,21 +5,32 @@ import apartmentDetails from './apartmentDetailsModule.js';
 const leaseInfoSchema = new Schema({
     apartmentDetails: {
         type: Schema.Types.ObjectId,
-        ref: apartmentDetails,
+        ref: 'apartmentDetails', // Reference to the ApartmentDetails model
         required: true
     },
-    leaseStartDate: {
-        type: Date,
+    User: {
+        type: Schema.Types.ObjectId,
+        ref: 'User', // Reference to the User model
         required: true
     },
-    leaseEndDate: {
-        type: Date,
-        required: true
+    status:{
+        type:String
     },
-    rentPerMonth: {
-        type: Number,
-        required: true
+    members:{
+        type:[String]
     }
+    // leaseStartDate: {
+    //     type: Date,
+    //     required: true
+    // },
+    // leaseEndDate: {
+    //     type: Date,
+    //     required: true
+    // },
+    // rentPerMonth: {
+    //     type: Number,
+    //     required: true
+    // }
 });
 
 // Define a model for the response

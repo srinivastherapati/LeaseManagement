@@ -7,9 +7,9 @@ const signupRouter=express.Router();
 
 signupRouter.use(bodyParser.json());
 
-signupRouter.post('/api/signup', async (req, res) => {
+signupRouter.post('/api/register', async (req, res) => {
     try {
-        const { firstName,lastName, email, password,phoneNumber,isAdmin } = req.body;
+        const { firstName,lastName, email, password,phoneNumber,isAdmin,currentAddress,annualIncome } = req.body;
 
         // Check if user with the same email already exists
         const existingUser = await User.findOne({ email });
@@ -18,7 +18,7 @@ signupRouter.post('/api/signup', async (req, res) => {
         }
 
         // Create a new user
-        const newUser = new User({ firstName,lastName, email, password,phoneNumber,isAdmin });
+        const newUser = new User({ firstName,lastName, email, password,phoneNumber,isAdmin,currentAddress,annualIncome });
         await newUser.save();
         res.status(201).json({ message: "User signed up successfully" });
     } catch (error) {

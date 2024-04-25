@@ -7,7 +7,7 @@ import User from "./modules/userModel.js";
 
 const loginRouter =express.Router();
 
-loginRouter.post('/login', async (req, res) => {
+loginRouter.post('/api/login', async (req, res) => {
     try {
         const { email, password } = req.body;
 
@@ -26,6 +26,19 @@ loginRouter.post('/login', async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+loginRouter.get('/api/getAllUsers', async (req, res) => {
+    try {
+        // Fetch all users from the User table
+        const allUsers = await User.find({}, { _id: 0, firstName: 1, email: 1 });
+
+        // Return the list of all users with only name and email fields
+        res.status(200).json(allUsers);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error' });
     }
 });
 

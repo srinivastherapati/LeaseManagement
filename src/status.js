@@ -65,4 +65,11 @@ statusRouter.get('/api/getStatus/:flatNumber/:apartmentNumber', async (req, res)
     }
 });
 
+// statusRouter.put('/api/updateApartmentStatus/:flatNumber/:apartmentNumber', async (req, res) => [
+//     try{
+//         const {status}=req.
+
+//     }
+// ])
+
 export default statusRouter;

@@ -2,28 +2,108 @@
 
 import express from 'express';
 import Complaints from './modules/complaintsModel.js';
-import apartmentDetails from './modules/apartmentDetailsModule.js';
+import User from './modules/userModel.js';
+import { UUID } from 'mongodb';
+import mongoose from 'mongoose';
 
 const complaintsRouter = express.Router();
 
-complaintsRouter.get('/api/complaints/:flatNumber/:apartmentNumber', async (req, res) => {
-    const{apartmentNumber,flatNumber}=req.params;
+complaintsRouter.get('/api/getComplaints/:userId', async (req, res) => {
+    const userId=req.params.userId;
     try {
-        const apartment= await apartmentDetails.findOne({
-            apartmentNumber:apartmentNumber,
-            flatNumber:flatNumber
-        });
-        if(!apartment){
-            return res.status(404).json({message:'apartment details not found'})
+
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
         }
-        // Fetch current complaints
-        const currentComplaints = await Complaints.find({}, { currentComplaints: 1, _id: 0 })
 
-        // Fetch previous complaints
-        const previousComplaints = await Complaints.find({}, { previousComplaints: 1, _id: 0 })
+        const userComplaints = await Complaints.find({ userId: userId });
 
-        // Return both lists as response
-        res.json({ currentComplaints, previousComplaints });
+        // Return complaints as response
+        res.json(userComplaints);
+        // // Fetch current complaints
+        // const currentComplaints = await Complaints.find({}, { currentComplaints: 1, _id: 0 })
+
+        // // Fetch previous complaints
+        // const previousComplaints = await Complaints.find({}, { previousComplaints: 1, _id: 0 })
+
+        // // Return both lists as response
+        // res.json({ currentComplaints, previousComplaints });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+
+complaintsRouter.get('/api/getComplaints', async (req, res) => {
+    try {
+        const allComplaints = await Complaints.find();
+        res.json(allComplaints);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+complaintsRouter.patch('/api/complaints/:complaintId', async (req, res) => {
+    const complaintId = req.params.complaintId;
+    const updateFields = req.body;
+
+    try {
+        // Find the complaint by ID
+        const complaint = await Complaints.findById(complaintId);
+
+        if (!complaint) {
+            return res.status(404).json({ message: 'Complaint not found' });
+        }
+
+        // Update specific fields of the complaint document
+        Object.assign(complaint, updateFields);
+
+        // Save the updated complaint
+        const updatedComplaint = await complaint.save();
+
+        res.json(updatedComplaint);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+complaintsRouter.post('/api/complaints/:userId', async (req, res) => {
+    const userId = req.params.userId;
+    const { complaintTitle, complaintDescription, name, email,commentFromOwner } = req.body;
+
+    try {
+        // Create a new complaint object with provided fields and backend-filled fields
+        if (!mongoose.isValidObjectId(userId)) {
+            return res.status(400).json({ message: 'Invalid user ID' });
+        }
+        const user=User.findById(userId);
+        if(!user){
+            return res.status(404).json({message:'user does not exists'})
+        }
+        const newComplaint = new Complaints({
+            userId: userId,
+            complaintTitle: complaintTitle,
+            complientStatus:"Received",
+            complaintDescription: complaintDescription,
+            raisedTime: new Date(),
+            expectedDateToSolve: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000),
+            commentFromOwner:commentFromOwner,
+            raisedByName: name,
+            raisedByEmail: email,
+        });
+
+        // Save the new complaint to the database
+        await newComplaint.save();
+
+        // Fetch all complaints of the user including the newly created complaint
+        const userComplaints = await Complaints.find({ userId: userId });
+
+        // Return the response of all complaints of the user
+        res.json(userComplaints);
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Server error' });

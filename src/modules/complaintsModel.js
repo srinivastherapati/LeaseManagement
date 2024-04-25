@@ -1,8 +1,9 @@
 import { Schema, model } from 'mongoose';
 
 const complaintSchema = new Schema({
-    complaintNumber: {
-        type: String,
+    userId: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
         required: true
     },
     complaintTitle: {
@@ -10,30 +11,41 @@ const complaintSchema = new Schema({
         required: true
     },
     complaintStatus: {
-        type: String,
-        required: true
-    },
-    complaintDateTime: {
-        type: Date,
-        required: true
+        type: String
     },
     complaintDescription: {
         type: String,
         required: true
-    }
-});
-
-const schema = new Schema({
-    currentComplaints: {
-        type: [complaintSchema],
-        default: []
     },
-    previousComplaints: {
-        type: [complaintSchema],
-        default: []
+    raisedTime: {
+        type: Date
+    },
+    expectedDateToSolve: {
+        type: Date
+    },
+    commentFromOwner:{
+        type:String
+    },
+    raisedByName:{
+        type:String
+    },
+    raisedByEmail:{
+        type:String
     }
+
 });
 
-const Complaints = model('Complaint', schema);
+// const schema = new Schema({
+//     currentComplaints: {
+//         type: [complaintSchema],
+//         default: []
+//     },
+//     previousComplaints: {
+//         type: [complaintSchema],
+//         default: []
+//     }
+// });
+
+const Complaints = model('Complaint', complaintSchema);
 
 export default Complaints;

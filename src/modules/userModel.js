@@ -26,6 +26,14 @@ const UserSchema = new Schema({
     },
     isAdmin:{
         type: Boolean
+    },
+    currentAddress:{
+        type:String,
+        required:true
+    },
+    annualIncome:{
+        type:Number,
+        required:true
     }
 });
 
