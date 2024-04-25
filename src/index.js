@@ -25,16 +25,21 @@ app.use(adminSignupRouter);
 app.use(adminLoginRouter);
 app.use(leasesApplyRouter);
 app.use(paymentsRouter);
-const corsOptions = {
-    origin: 'http://localhost:3001', // Allow only your React app domain
-    methods: ['GET', 'POST', 'OPTIONS'], // Methods allowed in the CORS request
-    allowedHeaders: ['Content-Type', 'Authorization'], // Headers allowed in CORS requests
-    credentials: true, // This allows the server to accept the cookie sent from the client
-    optionsSuccessStatus: 200 // For legacy browser support
-  };
-  
-  app.use(cors(corsOptions));
-  app.options('*', cors(corsOptions)); 
+
+app.use(cors({
+    origin: '*',
+    methods: ['GET', 'POST'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true,
+    optionsSuccessStatus: 204,
+    preflightContinue: false
+}));
+
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    next();
+});
+
 // Check MongoDB connection
 mongoose.connect('mongodb+srv://chakri:chakri123@cluster0.bgbz3be.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0/Rental', { useNewUrlParser: true, useUnifiedTopology: true });
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));

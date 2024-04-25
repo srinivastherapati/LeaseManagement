@@ -2,9 +2,10 @@
   "name": "leaserental",
   "version": "1.0.0",
   "description": "lease rental application",
-  "main": "index.js",
+  "main": "src/index.js",
   "type": "module",
   "scripts": {
+    "start" : "node src/index.js",
     "test": "test lease rental application"
   },
   "author": "",
@@ -15,6 +16,7 @@
     "express": "^4.18.3",
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.5.0",
-    "mongoose": "^8.2.2"
+    "mongoose": "^8.2.2",
+    "nodemon": "^3.1.0"
   }
 }

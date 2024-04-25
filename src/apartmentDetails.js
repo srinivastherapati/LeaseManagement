@@ -5,12 +5,11 @@ import bodyParser  from 'body-parser';
 const apartmentDetailsRouter=express.Router();
 
 apartmentDetailsRouter.use(bodyParser.json());
-apartmentDetailsRouter.get('/api/apartmentDetails/:flatNumber/:apartmentNumber',async (req,res)=>{
-    const{apartmentNumber,flatNumber}=req.params;
+apartmentDetailsRouter.get('/api/apartmentDetails/:id',async (req,res)=>{
+    const {id}=req.params;
     try{
         const apartment= await apartmentDetails.findOne({
-            apartmentNumber:apartmentNumber,
-            flatNumber:flatNumber
+            _id : id
         });
         if(!apartment){
             return res.status(404).json({message:'apartment not found with given details'})

@@ -9,16 +9,18 @@ const loginRouter =express.Router();
 
 loginRouter.post('/api/login', async (req, res) => {
     try {
+        console.log("I got a request");
+        console.log(req);
         const { email, password } = req.body;
 
         // Find user by email
         const user = await User.findOne({ email });
         if (!user) {
-            return res.status(401).json({ message: 'Invalid email ' });
+            return res.status(201).json({ message: 'Invalid email ' });
         }
         
         if (password!==user.password) {
-            return res.status(401).json({ message: 'Invalid  password' });
+            return res.status(201).json({ message: 'Invalid  password' });
         }
 
 
