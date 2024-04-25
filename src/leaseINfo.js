@@ -261,7 +261,23 @@ leaseInfoRouter.post('/api/applyLease/:userId', async (req, res) => {
         res.status(500).json({ message: 'Server error' });
     }
 });
+ 
+leaseInfoRouter.get('/api/getStatus/:userId' , async (req, res) =>{
+const{userId}= req.params;
 
+try{
+    const lease = await leaseInfo.findOne({ User: userId });
+        if(!lease){
+            return res.status(404).json({ message: 'Lease not exists for user' });
+        }
+        res.status(200).json({status:lease.status });
+
+}
+catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+}
+});
 
 // Export the router
 export default leaseInfoRouter;
