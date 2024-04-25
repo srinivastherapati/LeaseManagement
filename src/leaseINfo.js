@@ -268,7 +268,7 @@ const{userId}= req.params;
 try{
     const lease = await leaseInfo.findOne({ User: userId });
         if(!lease){
-            return res.status(404).json({ message: 'Lease not exists for user' });
+            return res.status(404).json({ message: 'Lease doest not exists for user' });
         }
         res.status(200).json({status:lease.status });
 
