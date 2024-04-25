@@ -40,6 +40,7 @@ apartmentDetailsRouter.post('/api/createApartment', async (req, res) => {
         
         const {        
             images,
+            thumbnails,
             amenities,
             location,
             address,
@@ -57,6 +58,7 @@ apartmentDetailsRouter.post('/api/createApartment', async (req, res) => {
             apartmentNumber,
             flatNumber,
             images,
+            thumbnails,
             amenities,
             location,
             address,
@@ -94,6 +96,7 @@ apartmentDetailsRouter.put('/api/updateApartment/:apartmentId', async (req, res)
             apartmentNumber,
             flatNumber,
             images,
+            thumbnails,
             amenities,
             location,
             address,
@@ -110,6 +113,7 @@ apartmentDetailsRouter.put('/api/updateApartment/:apartmentId', async (req, res)
         if (apartmentNumber) existingApartment.apartmentNumber = apartmentNumber;
         if (flatNumber) existingApartment.flatNumber = flatNumber;
         if (images) existingApartment.images = images;
+        if(thumbnails) existingApartment.thumbnails=thumbnails;
         if (amenities) existingApartment.amenities = amenities;
         if (location) existingApartment.location = location;
         if (address) existingApartment.address = address;
@@ -120,6 +124,7 @@ apartmentDetailsRouter.put('/api/updateApartment/:apartmentId', async (req, res)
         if (description) existingApartment.description = description;
         if (ownerName) existingApartment.ownerName = ownerName;
         if (ownerContact) existingApartment.ownerContact = ownerContact;
+        
 
         // Save the updated apartment
         await existingApartment.save();

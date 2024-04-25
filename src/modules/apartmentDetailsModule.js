@@ -12,6 +12,10 @@ const apartmentDetailsSchema= new Schema({
         type: String,
         default: ''
     }],
+    thumbnails: [{
+        type: String,
+        default: ''
+    }],
     amenities:[ {
         type:String,
         default: ''
