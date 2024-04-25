@@ -10,9 +10,6 @@ const complaintSchema = new Schema({
         type: String,
         required: true
     },
-    complaintStatus: {
-        type: String
-    },
     complaintDescription: {
         type: String,
         required: true
@@ -31,6 +28,10 @@ const complaintSchema = new Schema({
     },
     raisedByEmail:{
         type:String
+    },
+    status:{
+        type:String,
+        default:"Received"
     }
 
 });

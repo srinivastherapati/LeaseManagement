@@ -87,13 +87,12 @@ complaintsRouter.post('/api/complaints/:userId', async (req, res) => {
         const newComplaint = new Complaints({
             userId: userId,
             complaintTitle: complaintTitle,
-            complientStatus:"Received",
             complaintDescription: complaintDescription,
             raisedTime: new Date(),
             expectedDateToSolve: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000),
             commentFromOwner:commentFromOwner,
             raisedByName: name,
-            raisedByEmail: email,
+            raisedByEmail: email
         });
 
         // Save the new complaint to the database

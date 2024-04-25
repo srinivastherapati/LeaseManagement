@@ -265,13 +265,28 @@ leaseInfoRouter.post('/api/applyLease/:userId', async (req, res) => {
 leaseInfoRouter.get('/api/getStatus/:userId' , async (req, res) =>{
 const{userId}= req.params;
 
-try{
-    const lease = await leaseInfo.findOne({ User: userId });
-        if(!lease){
-            return res.status(404).json({ message: 'Lease doest not exists for user' });
-        }
-        res.status(200).json({status:lease.status });
+try {
+    const lease = await leaseInfo.findOne({ User: userId }).populate({
+        path: 'apartmentDetails',
+        select: 'apartmentNumber flatNumber ownerName ownerContact'
+    });
 
+    if (!lease) {
+        return res.status(404).json({ message: 'Lease does not exist for user' });
+    }
+
+    // Extract apartmentNumber and flatNumber from lease.apartmentDetails
+    const { apartmentNumber, flatNumber, ownerName , ownerContact } = lease.apartmentDetails;
+
+    res.status(200).json({
+        status: lease.status,
+        comment: "Rejected due to less income",
+        ApartmentNumber: apartmentNumber,
+        FlatNumber: flatNumber,
+        ownerContact:ownerContact,
+        ownerName:ownerName
+
+    });
 }
 catch (error) {
     console.error(error);
