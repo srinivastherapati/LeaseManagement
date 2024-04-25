@@ -36,30 +36,28 @@ leaseInfoRouter.get('/api/getAllGivenLeases', async (req, res) => {
         // Fetch all leases from the Lease table and populate the 'apartment' and 'user' fields
         const allLeases = await leaseInfo.find()
         .populate({
-            path: 'apartmentDetails',
-            select: 'apartmentNumber flatNumber'
+            path: 'User',
+            select: 'firstName email annualIncome'
         })
         .populate({
-            path: 'User',
-            select: 'firstName anualIncome email',
-            options: { strictPopulate: false }
+            path: 'apartmentDetails',
+            select: 'apartmentNumber flatNumber'
         });
 
-        // Format the response according to the specified sample
-        const formattedLeases = allLeases.map(lease => ({
-            "Apt No.": lease.apartmentDetails.apartmentNumber,
-            "Flat no.": lease.apartmentDetails.flatNumber,
-            Status: lease.status,
-            UserDetails: {
-            //    " Name": lease.User.firstName,
-            //     "Income": lease.User.anualIncome,
-            //     "Mail": lease.User.email
-            },
-            Members: lease.members
-        }));
+        // const formattedLeases = allLeases.map(lease => ({
+        //     "Apt No.": lease.apartmentDetails.apartmentNumber,
+        //     "Flat no.": lease.apartmentDetails.flatNumber,
+        //     Status: lease.status,
+        //     "UserDetails": {
+        //        " Name": lease.User.firstName,
+        //         "Income": lease.User.anualIncome,
+        //         "Mail": lease.User.email
+        //     },
+        //     Members: lease.members
+        // }));
 
         // Return the list of all given leases
-        res.json({ leases: formattedLeases });
+        res.json({ leases: allLeases });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Server error' });

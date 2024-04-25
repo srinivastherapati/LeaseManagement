@@ -24,7 +24,15 @@ loginRouter.post('/api/login', async (req, res) => {
         }
 
 
-        res.status(200).json({ message:"User logged in successfully" ,email:user.email, isAdmin:user.isAdmin});
+        res.status(200).json({
+            message: 'User logged in successfully',
+            user: {
+                userId: user._id,
+                fullName: `${user.firstName} ${user.lastName}`,
+                email: user.email,
+                isAdmin: user.isAdmin
+            }
+        });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Internal server error' });
