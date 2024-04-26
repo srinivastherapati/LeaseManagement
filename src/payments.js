@@ -71,6 +71,19 @@ paymentsRouter.get('/api/getAllRequiredPayments/:userId', async (req, res) => {
         res.status(500).json({ message: 'Server error' });
     }
 });
+paymentsRouter.get('/api/getAllRequiredPayments', async (req, res) => {
+    try {
+        
+        // Retrieve all payments for the active lease
+        const requiredPayments = await Payment.find();
+
+        // Return the list of payments
+        res.status(200).json({ message: 'Success', payments: requiredPayments });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
 
 
 

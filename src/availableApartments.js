@@ -10,7 +10,6 @@ availableApartmentsRouter.get('/api/getAvailableApartments', async (req, res) =>
         // Fetch all apartments
         const apartments = await availableApartments.find()
         .populate('apartmentDetails');
-
         // Return the list of apartments as response
         res.json(apartments);
     } catch (error) {
