@@ -251,6 +251,14 @@ leaseInfoRouter.post('/api/applyLease/:userId', async (req, res) => {
             members: members || [] // If members exist, assign them, otherwise assign an empty array
         });
 
+        if (apartmentData) {
+            await apartmentDetails.updateOne(
+              { _id: apartmentData._id },
+              { $set: { isBooked: true } }
+            );
+          }
+          await apartmentData.save();
+
         // Save the new lease info document
         await newLeaseInfo.save();
 

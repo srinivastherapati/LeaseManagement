@@ -41,7 +41,11 @@ app.use((req, res, next) => {
 });
 
 // Check MongoDB connection
-mongoose.connect('mongodb+srv://chakri:chakri123@cluster0.bgbz3be.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0/Rental', { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect('mongodb+srv://chakri:chakri123@cluster0.bgbz3be.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0/Rental',
+ {useNewUrlParser: true,
+    useUnifiedTopology: true,
+    ssl: true });
+
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 db.once('open', function () {
     console.log('Connected to MongoDB');

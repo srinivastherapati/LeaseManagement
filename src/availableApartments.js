@@ -1,6 +1,7 @@
 
 import express from 'express';
 import availableApartments from './modules/availableApartmentsModel.js';
+import apartmentDetails from './modules/apartmentDetailsModule.js';
 
 const availableApartmentsRouter = express.Router();
 
@@ -8,8 +9,9 @@ const availableApartmentsRouter = express.Router();
 availableApartmentsRouter.get('/api/getAvailableApartments', async (req, res) => {
     try {
         // Fetch all apartments
-        const apartments = await availableApartments.find()
-        .populate('apartmentDetails');
+        const apartments = await availableApartments.find({ isBooked: false })
+            .populate('apartmentDetails');
+        
         // Return the list of apartments as response
         res.json(apartments);
     } catch (error) {

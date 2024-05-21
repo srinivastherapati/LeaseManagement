@@ -44,7 +44,7 @@ const apartmentDetailsSchema= new Schema({
     },
     availableFrom: {
         type: Date,
-        default: null
+        required:true
     },
     bedrooms: {
         type: Number,
@@ -69,6 +69,10 @@ const apartmentDetailsSchema= new Schema({
     ownerContact: {
         type: String,
         default: ''
+    },
+    isBooked:{
+        type:Boolean,
+        default: false
     }
 
 })

@@ -22,6 +22,14 @@ const leaseApplicationSchema = new Schema({
     applicationDate: {
         type: Date,
         default: Date.now
+    },
+    apartmentNumber:{
+        type:String,
+        required:true
+    },
+    flatNumber:{
+        type:String,
+        required:true
     }
 });
 
