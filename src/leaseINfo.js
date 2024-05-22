@@ -3,6 +3,9 @@ import express from 'express';
 import leaseInfo from './modules/leaseInfoModel.js';
 import apartmentDetails from './modules/apartmentDetailsModule.js';
 import User from './modules/userModel.js';
+import StatusModel from './modules/statusSchema.js';
+import { UUID } from 'mongodb';
+import Payment from './modules/PaymentModel.js';
 
 // Create an Express router
 const leaseInfoRouter = express.Router();
@@ -73,6 +76,15 @@ leaseInfoRouter.put('/api/terminateLease/:leaseId', async (req, res) => {
         if (!updatedLease) {
             return res.status(404).json({ message: 'Lease not found' });
         }
+        const apartmentData=await  apartmentDetails.findById(updatedLease.apartmentDetails);
+
+        if (apartmentData) {
+            await apartmentDetails.updateOne(
+              { _id: apartmentData._id },
+              { $set: { isBooked: true } }
+            );
+          }
+          await apartmentData.save();
 
         // Fetch all leases after updating
         const allLeases = await leaseInfo.find();
@@ -258,12 +270,28 @@ leaseInfoRouter.post('/api/applyLease/:userId', async (req, res) => {
             );
           }
           await apartmentData.save();
+          const status= new StatusModel({
+            hasApplied:true,
+            applicationNumber: new UUID().toString(),
+            apartmentDetails:apartmentDetailsId,
+            thumbnail:"sample-1.avif",
+            status:"applied"
+          })
+          await status.save();
 
         // Save the new lease info document
         await newLeaseInfo.save();
+      
+        const fees = {
+            applicationFee: 100, // Application fee amount
+            advanceFee: 500 // Advance fee amount
+        };
 
-        // Return success response
-        res.status(200).json({ message: 'Lease application submitted successfully' });
+        res.status(201).json({
+            message: 'Lease application submitted successfully',
+            leaseInfo: newLeaseInfo,
+            fees: fees
+        });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Server error' });

@@ -17,16 +17,7 @@ statusRouter.get('/api/getStatus/:flatNumber/:apartmentNumber', async (req, res)
         if(!apartment){
             return res.status(404).json({message:'apartment details not found'})
         }
-        // const matchingApartment = await apartmentDetails.findOne({
-        //     _id: apartment._id, // Match by the ObjectId of the found apartment
-        //     apartmentNumber: apartmentNumber,
-        //     flatNumber: flatNumber
-        // });
-        
-        // if (!matchingApartment) {
-        //     return res.status(400).json({ message: 'apartmentNumber and flatNumber do not belong to the same apartmentDetails' });
-        // }
-        // Fetch status data
+    
         const statusData = await StatusModel.findOne()
         .populate('apartmentDetails', ['apartmentNumber', 'flatNumber','ownerName','ownerContact']);
 
@@ -65,11 +56,106 @@ statusRouter.get('/api/getStatus/:flatNumber/:apartmentNumber', async (req, res)
     }
 });
 
-// statusRouter.put('/api/updateApartmentStatus/:flatNumber/:apartmentNumber', async (req, res) => [
-//     try{
-//         const {status}=req.
+statusRouter.put('/api/updateStatus/:flatNumber/:apartmentNumber', async (req, res) => {
+    const { apartmentNumber, flatNumber } = req.params;
+    const { status } = req.body;
 
-//     }
-// ])
+    try {
+        // Find the apartment by apartmentNumber and flatNumber
+        const apartment = await apartmentDetails.findOne({
+            apartmentNumber: apartmentNumber,
+            flatNumber: flatNumber
+        });
+
+        if (!apartment) {
+            return res.status(404).json({ message: 'Apartment details not found' });
+        }
+
+        // Find the status data associated with the apartment
+        const statusData = await StatusModel.findOne({
+            apartmentDetails: apartment._id // assuming apartmentDetails field in StatusModel holds the reference to apartmentDetails document
+        });
+
+        if (!statusData) {
+            return res.status(404).json({ message: 'Status data not found' });
+        }
+
+        // Update the status and progress based on the new status
+        statusData.status = status;
+        switch (status) {
+            case 'applied':
+                statusData.progress = 20;
+                break;
+            case 'underReview':
+                statusData.progress = 40;
+                break;
+            case 'partiallyApproved':
+                statusData.progress = 60;
+                break;
+            case 'verified':
+                statusData.progress = 80;
+                break;
+            case 'approved':
+                statusData.progress = 100;
+                break;
+            case 'declined':
+                statusData.progress = 100;
+                break;
+            default:
+                statusData.progress = 0;
+        }
+
+        // Save the updated status data
+        await statusData.save();
+
+        // Return the updated status data as response
+        res.json(statusData);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+statusRouter.get('/api/getAllStatus', async (req, res) => {
+    try {
+        
+    
+        const statusData = await StatusModel.find()
+
+        if (!statusData) {
+            return res.status(404).json({ message: 'Status data not found' });
+        }
+        // switch (statusData.status) {
+        //     case 'applied':
+        //         statusData.progress = 20;
+        //         break;
+        //     case 'underReview':
+        //         statusData.progress = 40;
+        //         break;
+        //     case 'partiallyApproved':
+        //         statusData.progress = 60;
+        //         break;
+        //      case 'verified':
+        //         statusData.progress = 80;
+        //         break;
+        //     case 'approved':
+        //         statusData.progress = 100;
+        //         break;
+        //      case 'declined':
+        //          statusData.progress = 100;
+        //         break;
+        //     default: 
+        //     statusData.progress = 100;
+                
+        // }
+
+        // Return the status data as response
+        res.json(statusData);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
 
 export default statusRouter;

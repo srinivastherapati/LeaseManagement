@@ -7,7 +7,7 @@ const statusSchema = new Schema({
         required: true
     },
     applicationNumber: {
-        type: Number,
+        type: String,
         required: true
     },
     apartmentDetails: {
@@ -21,7 +21,7 @@ const statusSchema = new Schema({
     },
     progress: {
         type: Number,
-        required: true
+      //  required: true
     },
     status: {
         type: String,

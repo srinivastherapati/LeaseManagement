@@ -8,16 +8,16 @@ const paymentSchema = new mongoose.Schema({
     },
     bankNumber: {
         type: String,
-        required: true
+       // required: true
     },
     routerNumber: {
         type: String,
-        required: true
+       // required: true
     },
     transactionId: {
         type: String,
-        required: true,
-        unique: true
+      //  required: true,
+      //  unique: true
     },
     amount: {
         type: Number,
@@ -33,7 +33,7 @@ const paymentSchema = new mongoose.Schema({
     },
     description:{
         type:String,
-        required:true
+      //  required:true
     }
 });
 
