@@ -81,7 +81,7 @@ leaseInfoRouter.put('/api/terminateLease/:leaseId', async (req, res) => {
         if (apartmentData) {
             await apartmentDetails.updateOne(
               { _id: apartmentData._id },
-              { $set: { isBooked: true } }
+              { $set: { isBooked: false } }
             );
           }
           await apartmentData.save();
@@ -229,6 +229,34 @@ leaseInfoRouter.get('/api/getUserLeaseDetails/:userId', async (req, res) => {
             __v: lease.__v
         });
     } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+leaseInfoRouter.get('/api/getStatus/:userId', async (req, res) => {
+    const userId = req.params.userId;
+
+    try {
+        // Find the user by ID
+        const user = await User.findById(userId);
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Find the lease associated with the user
+        const lease = await leaseInfo.findOne({ User: userId });
+
+        if (!lease) {
+            return res.status(404).json({ message: 'Lease not found for user' });
+        }
+        res.status(201).json({
+            message: 'Lease application status is ',
+            status: lease.status,
+        });
+    }
+    catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Server error' });
     }

@@ -76,5 +76,6 @@ const apartmentDetailsSchema= new Schema({
     }
 
 })
+apartmentDetailsSchema.index({ apartmentNumber: 1, flatNumber: 1 }, { unique: true });
 const apartmentDetails= model('apartmentDetails',apartmentDetailsSchema);
 export default apartmentDetails;

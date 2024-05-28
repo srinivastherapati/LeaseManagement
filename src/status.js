@@ -3,23 +3,30 @@
 import express from 'express';
 import StatusModel from './modules/statusSchema.js';
 import apartmentDetails from './modules/apartmentDetailsModule.js';
+import leaseInfo from './modules/leaseInfoModel.js';
 
 const statusRouter = express.Router();
 
 // GET /api/status
-statusRouter.get('/api/getStatus/:flatNumber/:apartmentNumber', async (req, res) => {
-    const{apartmentNumber,flatNumber}=req.params;
+statusRouter.get('/api/getStatus/:userId', async (req, res) => {
+    const{userId}=req.params;
     try {
-        const apartment= await apartmentDetails.findOne({
-            apartmentNumber:apartmentNumber,
-            flatNumber:flatNumber
-        });
-        if(!apartment){
-            return res.status(404).json({message:'apartment details not found'})
+        // const apartment= await apartmentDetails.findOne({
+        //     apartmentNumber:apartmentNumber,
+        //     flatNumber:flatNumber
+        // });
+        // if(!apartment){
+        //     return res.status(404).json({message:'apartment details not found'})
+        // }
+
+        const lease = await leaseInfo.findOne({ User: userId });
+        if(!lease){
+            return res.status(404).json({ message: 'lease does not exists for user' });
         }
+        const apartmentDetailsId=lease.apartmentDetails._id;
     
-        const statusData = await StatusModel.findOne()
-        .populate('apartmentDetails', ['apartmentNumber', 'flatNumber','ownerName','ownerContact']);
+        const statusData = await StatusModel.findOne({apartmentDetails:apartmentDetailsId})
+        .populate('apartmentDetails', ['apartmentNumber', 'flatNumber','ownerName','ownerContact']);;
 
         if (!statusData) {
             return res.status(404).json({ message: 'Status data not found' });
@@ -118,39 +125,37 @@ statusRouter.put('/api/updateStatus/:flatNumber/:apartmentNumber', async (req, r
 
 statusRouter.get('/api/getAllStatus', async (req, res) => {
     try {
-        
-    
         const statusData = await StatusModel.find()
+            .populate('apartmentDetails', 'apartmentNumber flatNumber') 
+            .select('apartmentDetails status'); 
 
-        if (!statusData) {
+        if (!statusData || statusData.length === 0) {
             return res.status(404).json({ message: 'Status data not found' });
         }
-        // switch (statusData.status) {
-        //     case 'applied':
-        //         statusData.progress = 20;
-        //         break;
-        //     case 'underReview':
-        //         statusData.progress = 40;
-        //         break;
-        //     case 'partiallyApproved':
-        //         statusData.progress = 60;
-        //         break;
-        //      case 'verified':
-        //         statusData.progress = 80;
-        //         break;
-        //     case 'approved':
-        //         statusData.progress = 100;
-        //         break;
-        //      case 'declined':
-        //          statusData.progress = 100;
-        //         break;
-        //     default: 
-        //     statusData.progress = 100;
-                
-        // }
+        const apartmentDetailsIds = statusData.map(status => status.apartmentDetails._id);
 
-        // Return the status data as response
-        res.json(statusData);
+        const leaseInfoData = await leaseInfo.find({ apartmentDetails: { $in: apartmentDetailsIds } })
+        .populate('User', 'firstName lastName') // Populate the userName from User model
+        .select('apartmentDetails User');
+
+    // Create a map of apartmentDetails ID to userName
+    const userNameMap = {};
+    leaseInfoData.forEach(leaseInfo => {
+        userNameMap[leaseInfo.apartmentDetails] = `${leaseInfo.User.firstName} ${leaseInfo.User.lastName}`;
+    });
+
+    // Add userName to the statusData
+    const result = statusData.map(status => ({
+        apartmentNumber: status.apartmentDetails.apartmentNumber,
+        flatNumber: status.apartmentDetails.flatNumber,
+        status: status.status,
+        appliedBy: userNameMap[status.apartmentDetails._id] // Add userName from the map
+    }));
+
+    res.json(result);
+
+
+      
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Server error' });

@@ -19,18 +19,6 @@ const leaseInfoSchema = new Schema({
     members:{
         type:[String]
     }
-    // leaseStartDate: {
-    //     type: Date,
-    //     required: true
-    // },
-    // leaseEndDate: {
-    //     type: Date,
-    //     required: true
-    // },
-    // rentPerMonth: {
-    //     type: Number,
-    //     required: true
-    // }
 });
 
 // Define a model for the response
