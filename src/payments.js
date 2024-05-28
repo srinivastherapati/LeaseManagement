@@ -62,7 +62,7 @@ paymentsRouter.get('/api/getAllRequiredPayments/:userId', async (req, res) => {
         }
 
         // Retrieve all payments for the active lease
-        const requiredPayments = await Payment.find({ user: userId });
+        const requiredPayments = await Payment.find({ user: userId }).populate('user', 'email');;
 
         // Return the list of payments
         res.status(200).json({ message: 'Success', payments: requiredPayments });
@@ -75,7 +75,7 @@ paymentsRouter.get('/api/getAllRequiredPayments', async (req, res) => {
     try {
         
         // Retrieve all payments for the active lease
-        const requiredPayments = await Payment.find();
+        const requiredPayments = await Payment.find().populate('user', 'email');
 
         // Return the list of payments
         res.status(200).json({ message: 'Success', payments: requiredPayments });
@@ -84,6 +84,34 @@ paymentsRouter.get('/api/getAllRequiredPayments', async (req, res) => {
         res.status(500).json({ message: 'Server error' });
     }
 });
+
+paymentsRouter.put('/api/updatePayment/:id', async (req, res) => {
+    try {
+        
+        // Retrieve all payments for the active lease
+        const {id}=req.params;
+        const {status,transactionId}=req.body;
+        const payment= await Payment.findById(id);
+        if(!payment){
+            return res.status(200).json({ message: 'no payments founds'});
+        }
+        const paymentInfo= await Payment.findOne({transactionId:transactionId});
+        if(!paymentInfo){
+            return res.status(200).json({ message: 'no payments found with transaction id {}',transactionId });
+        }
+        paymentInfo.status=status;
+         await paymentInfo.save();
+         const updatedPayments = await Payment.find().populate('user', 'email');
+
+         // Return the list of payments
+         res.status(200).json({ message: 'Success', payments: updatedPayments });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+
 
 
 

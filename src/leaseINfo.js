@@ -37,7 +37,7 @@ leaseInfoRouter.get('/api/getLeaseInfo/:flatNumber/:apartmentNumber', async (req
 leaseInfoRouter.get('/api/getAllGivenLeases', async (req, res) => {
     try {
         // Fetch all leases from the Lease table and populate the 'apartment' and 'user' fields
-        const allLeases = await leaseInfo.find()
+        const allLeases = await leaseInfo.find({ status: { $ne: 'terminated' } })
         .populate({
             path: 'User',
             select: 'firstName email annualIncome'
@@ -46,18 +46,6 @@ leaseInfoRouter.get('/api/getAllGivenLeases', async (req, res) => {
             path: 'apartmentDetails',
             select: 'apartmentNumber flatNumber'
         });
-
-        // const formattedLeases = allLeases.map(lease => ({
-        //     "Apt No.": lease.apartmentDetails.apartmentNumber,
-        //     "Flat no.": lease.apartmentDetails.flatNumber,
-        //     Status: lease.status,
-        //     "UserDetails": {
-        //        " Name": lease.User.firstName,
-        //         "Income": lease.User.anualIncome,
-        //         "Mail": lease.User.email
-        //     },
-        //     Members: lease.members
-        // }));
 
         // Return the list of all given leases
         res.json({ leases: allLeases });
@@ -87,7 +75,15 @@ leaseInfoRouter.put('/api/terminateLease/:leaseId', async (req, res) => {
           await apartmentData.save();
 
         // Fetch all leases after updating
-        const allLeases = await leaseInfo.find();
+        const allLeases = await leaseInfo.find({ status: { $ne: 'terminated' } })
+        .populate({
+            path: 'User',
+            select: 'firstName email annualIncome'
+        })
+        .populate({
+            path: 'apartmentDetails',
+            select: 'apartmentNumber flatNumber'
+        });
 
         // Return the list of all leases after updating
         res.json({ leases: allLeases });
@@ -287,7 +283,7 @@ leaseInfoRouter.post('/api/applyLease/:userId', async (req, res) => {
         const newLeaseInfo = new leaseInfo({
             apartmentDetails: apartmentDetailsId,
             User: userId,
-            status: 'Pending', // Assuming default status is pending
+            status: 'Active', 
             members: members || [] // If members exist, assign them, otherwise assign an empty array
         });
 
