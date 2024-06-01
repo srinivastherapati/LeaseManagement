@@ -95,12 +95,9 @@ paymentsRouter.put('/api/updatePayment/:id', async (req, res) => {
         if(!payment){
             return res.status(200).json({ message: 'no payments founds'});
         }
-        const paymentInfo= await Payment.findOne({transactionId:transactionId});
-        if(!paymentInfo){
-            return res.status(200).json({ message: 'no payments found with transaction id {}',transactionId });
-        }
-        paymentInfo.status=status;
-         await paymentInfo.save();
+        payment.transactionId = transactionId;
+        payment.status=status;
+         await payment.save();
          const updatedPayments = await Payment.find().populate('user', 'email');
 
          // Return the list of payments

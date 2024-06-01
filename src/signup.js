@@ -17,6 +17,7 @@ signupRouter.post('/api/register', async (req, res) => {
             return res.status(400).json({ message: "Email already registered" });
         }
 
+
         // Create a new user
         const newUser = new User({ firstName,lastName, email, password,phoneNumber,isAdmin,currentAddress,annualIncome });
         await newUser.save();

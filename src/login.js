@@ -42,7 +42,7 @@ loginRouter.post('/api/login', async (req, res) => {
 loginRouter.get('/api/getAllUsers', async (req, res) => {
     try {
         // Fetch all users from the User table
-        const allUsers = await User.find({}, { _id: 0, firstName: 1, email: 1 });
+        const allUsers = await User.find({}, { _id: 1, firstName: 1, email: 1 });
 
         // Return the list of all users with only name and email fields
         res.status(200).json(allUsers);
