@@ -93,7 +93,8 @@ paymentsRouter.put('/api/updatePayment/:id', async (req, res) => {
         const {status,transactionId}=req.body;
         const payment= await Payment.findById(id);
         const existingTransactionId=await Payment.find({transactionId:transactionId});
-        if(existingTransactionId){
+        console.log( existingTransactionId );
+        if(existingTransactionId && existingTransactionId.length > 0){
             return res.status(409).json({ message: 'payment with transaction id already exists'});
         }
         if(!payment){
@@ -103,7 +104,7 @@ paymentsRouter.put('/api/updatePayment/:id', async (req, res) => {
         payment.transactionId = transactionId;
         payment.status=status;
          await payment.save();
-         const updatedPayments = await Payment.find().populate('user', 'email');
+         const updatedPayments = await Payment.find({user : payment.user}).populate('user', 'email');
 
          // Return the list of payments
          res.status(200).json({ message: 'Success', payments: updatedPayments });
