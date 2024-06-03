@@ -135,32 +135,23 @@ statusRouter.get('/api/getAllStatus', async (req, res) => {
         const apartmentDetailsIds = statusData.map(status => status.apartmentDetails._id);
 
         const leaseInfoData = await leaseInfo.find({ apartmentDetails: { $in: apartmentDetailsIds } })
-        .populate('User', 'firstName lastName') // Populate the userName from User model
+        .populate('User', 'firstName lastName email phoneNumber annualIncome') // Populate the userName from User model
         .select('apartmentDetails User');
 
-    // Create a map of apartmentDetails ID to userName
-    const userNameMap = {};
-    leaseInfoData.forEach(leaseInfo => {
-        userMap[leaseInfo.apartmentDetails] = {
-            name: `${leaseInfo.User.firstName} ${leaseInfo.User.lastName}`,
-            email: leaseInfo.User.email,
-            phoneNumber: leaseInfo.User.phoneNumber,
-            income: leaseInfo.User.annualIncome
-        };
-    });
+        const result = statusData.map(status => {
+            const leaseInfo = leaseInfoData.find(lease => lease.apartmentDetails.toString() === status.apartmentDetails._id.toString());
+            return {
+                apartmentNumber: status.apartmentDetails.apartmentNumber,
+                flatNumber: status.apartmentDetails.flatNumber,
+                status: status.status,
+                userName: leaseInfo ? `${leaseInfo.User.firstName} ${leaseInfo.User.lastName}` : null,
+                email: leaseInfo ? leaseInfo.User.email : "emagf",
+                phoneNumber: leaseInfo ? leaseInfo.User.phoneNumber : "kjhgfd",
+                income: leaseInfo ? leaseInfo.User.annualIncome : "jhgfd"
+            };
+        });
 
-    // Add userName to the statusData
-    const result = statusData.map(status => ({
-        apartmentNumber: status.apartmentDetails.apartmentNumber,
-        flatNumber: status.apartmentDetails.flatNumber,
-        status: status.status,
-        userName: userMap[status.apartmentDetails._id]?.name,
-    email: userMap[status.apartmentDetails._id]?.email,
-    phoneNumber: userMap[status.apartmentDetails._id]?.phoneNumber,
-    income: userMap[status.apartmentDetails._id]?.income 
-    }));
-
-    res.json(result);
+        res.json(result);
 
 
       
