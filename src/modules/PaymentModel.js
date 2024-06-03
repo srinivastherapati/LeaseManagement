@@ -6,14 +6,6 @@ const paymentSchema = new mongoose.Schema({
         ref: 'User', // Reference to the User model
         required: true
     },
-    bankNumber: {
-        type: String,
-       // required: true
-    },
-    routerNumber: {
-        type: String,
-       // required: true
-    },
     transactionId: {
         type: String,
       //  required: true,

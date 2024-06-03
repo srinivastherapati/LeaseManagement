@@ -141,7 +141,12 @@ statusRouter.get('/api/getAllStatus', async (req, res) => {
     // Create a map of apartmentDetails ID to userName
     const userNameMap = {};
     leaseInfoData.forEach(leaseInfo => {
-        userNameMap[leaseInfo.apartmentDetails] = `${leaseInfo.User.firstName} ${leaseInfo.User.lastName}`;
+        userMap[leaseInfo.apartmentDetails] = {
+            name: `${leaseInfo.User.firstName} ${leaseInfo.User.lastName}`,
+            email: leaseInfo.User.email,
+            phoneNumber: leaseInfo.User.phoneNumber,
+            income: leaseInfo.User.annualIncome
+        };
     });
 
     // Add userName to the statusData
@@ -149,7 +154,10 @@ statusRouter.get('/api/getAllStatus', async (req, res) => {
         apartmentNumber: status.apartmentDetails.apartmentNumber,
         flatNumber: status.apartmentDetails.flatNumber,
         status: status.status,
-        appliedBy: userNameMap[status.apartmentDetails._id] // Add userName from the map
+        userName: userMap[status.apartmentDetails._id]?.name,
+    email: userMap[status.apartmentDetails._id]?.email,
+    phoneNumber: userMap[status.apartmentDetails._id]?.phoneNumber,
+    income: userMap[status.apartmentDetails._id]?.income 
     }));
 
     res.json(result);

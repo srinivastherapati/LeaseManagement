@@ -38,8 +38,17 @@ complaintsRouter.get('/api/getComplaints/:userId', async (req, res) => {
 
 complaintsRouter.get('/api/getComplaints', async (req, res) => {
     try {
-        const allComplaints = await Complaints.find();
-        res.json(allComplaints);
+        // Populate the userId field to include name and email from the User model
+        const allComplaints = await Complaints.find().populate('userId', 'firstName lastName email');
+
+        // Transform the response to include raisedByName and raisedByEmail
+        const transformedComplaints = allComplaints.map(complaint => ({
+            ...complaint.toObject(),
+            raisedByName: `${complaint.userId.firstName} ${complaint.userId.lastName}`,
+            raisedByEmail: complaint.userId.email
+        }));
+
+        res.json(transformedComplaints);
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Server error' });

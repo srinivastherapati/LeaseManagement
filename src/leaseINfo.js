@@ -73,6 +73,7 @@ leaseInfoRouter.put('/api/terminateLease/:leaseId', async (req, res) => {
             );
           }
           await apartmentData.save();
+          await StatusModel.deleteMany({ apartmentDetails: updatedLease.apartmentDetails });
 
         // Fetch all leases after updating
         const allLeases = await leaseInfo.find({ status: { $ne: 'terminated' } })
@@ -306,10 +307,20 @@ leaseInfoRouter.post('/api/applyLease/:userId', async (req, res) => {
         // Save the new lease info document
         await newLeaseInfo.save();
       
-        const fees = {
-            applicationFee: 100, // Application fee amount
-            advanceFee: 500 // Advance fee amount
-        };
+        const fees = [
+            { amount: 100, description: 'Application Fee' },
+            { amount: 500, description: 'Advance Fee' }
+        ];
+
+        for (const fee of fees) {
+            const payment = new Payment({
+                user: userId,
+                amount: fee.amount,
+                description: fee.description,
+                transactionId: Math.random().toString(36).substring(7), // or generate a transaction ID as needed
+            });
+            await payment.save();
+        }
 
         res.status(201).json({
             message: 'Lease application submitted successfully',

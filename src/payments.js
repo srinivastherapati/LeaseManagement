@@ -92,9 +92,13 @@ paymentsRouter.put('/api/updatePayment/:id', async (req, res) => {
         const {id}=req.params;
         const {status,transactionId}=req.body;
         const payment= await Payment.findById(id);
+        if(payment.transactionId !== transactionId){
+            return res.status(400).json({message:"can't update transaction id"});
+        }
         if(!payment){
             return res.status(200).json({ message: 'no payments founds'});
         }
+
         payment.transactionId = transactionId;
         payment.status=status;
          await payment.save();
