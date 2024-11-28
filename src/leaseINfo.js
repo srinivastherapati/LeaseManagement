@@ -309,7 +309,9 @@ leaseInfoRouter.post('/api/applyLease/:userId', async (req, res) => {
       
         const fees = [
             { amount: 100, description: 'Application Fee' },
-            { amount: 500, description: 'Advance Fee' }
+            { amount: 500, description: 'Advance Fee' },
+            { amount : 120, description : 'Utility Fee'},
+            { amount : 250, description : 'Water and Electricity Fee'}
         ];
 
         for (const fee of fees) {

@@ -238,7 +238,7 @@ paymentsRouter.put('/api/updatePayment/:id', async (req, res) => {
         payment.status=status;
         payment.dueDate=new Date();
          await payment.save();
-         const updatedPayments = await Payment.find().populate('user', 'email');
+         const updatedPayments = await Payment.find({user : payment.user}).populate('user', 'email');
 
          // Return the list of payments
          res.status(200).json({ message: 'Success', payments: updatedPayments });
