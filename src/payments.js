@@ -179,7 +179,7 @@ paymentsRouter.get('/api/upcoming-payments/:userId', async (req, res) => {
         });
 
         if (upcomingPayments.length === 0) {
-            return res.status(404).json({ message: 'No upcoming payments found.' });
+            return res.status(404).json({ message: 'No upcoming payments found.',upcomingPayments:[] });
         }
 
         res.status(200).json({
@@ -201,7 +201,7 @@ paymentsRouter.get('/api/past-payments/:userId', async (req, res) => {
         .exec();
 
         if (pastPayments.length === 0) {
-            return res.status(404).json({ message: 'No previous payments found.' });
+            return res.status(404).json({ message: 'No previous payments found.' ,pastPayments:[]});
         }
          const formattedPayments = pastPayments.map(payment => ({
             amount: payment.amount,

@@ -313,12 +313,13 @@ leaseInfoRouter.post('/api/applyLease/:userId', async (req, res) => {
             { amount : 120, description : 'Utility Fee'},
             { amount : 250, description : 'Water and Electricity Fee'}
         ];
-
+        const currentDate=new Date();
         for (const fee of fees) {
             const payment = new Payment({
                 user: userId,
                 amount: fee.amount,
                 description: fee.description,
+                dueDate: new Date(currentDate.setDate(currentDate.getDate() + 15))
               //  transactionId: Math.random().toString(36).substring(7), // or generate a transaction ID as needed
             });
             await payment.save();
