@@ -8,8 +8,7 @@ const paymentSchema = new mongoose.Schema({
     },
     transactionId: {
         type: String,
-      //  required: true,
-      //  unique: true
+      default:"payment pending",
     },
     amount: {
         type: Number,
@@ -25,7 +24,10 @@ const paymentSchema = new mongoose.Schema({
     },
     description:{
         type:String,
-      //  required:true
+        required:true
+    },
+    dueDate:{
+        type:Date,
     }
 });
 

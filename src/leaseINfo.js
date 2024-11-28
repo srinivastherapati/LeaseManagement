@@ -264,7 +264,7 @@ leaseInfoRouter.post('/api/applyLease/:userId', async (req, res) => {
     const { apartmentDetailsId, members } = req.body;
 
     try {
-        const lease = await leaseInfo.findOne({ User: userId });
+        const lease = await leaseInfo.findOne({ User: userId, });
         if(lease){
             return res.status(409).json({ message: 'Lease exists for user' });
         }
@@ -317,7 +317,7 @@ leaseInfoRouter.post('/api/applyLease/:userId', async (req, res) => {
                 user: userId,
                 amount: fee.amount,
                 description: fee.description,
-                transactionId: Math.random().toString(36).substring(7), // or generate a transaction ID as needed
+              //  transactionId: Math.random().toString(36).substring(7), // or generate a transaction ID as needed
             });
             await payment.save();
         }
